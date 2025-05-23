@@ -1,0 +1,13 @@
+SA38_cand3.pdb
+SA21_cand1.pdb
+SA45_cand1.pdb
+SA35_cand1.pdb
+SA2_cand2.pdb
+SA10_cand4.pdb
+SA27_cand1.pdb
+SA47_cand1.pdb
+SA15_cand1.pdb
+SA37_cand1.pdb
+SA50_cand1.pdb
+SA22_cand1.pdb
+SA49_cand1.pdb

@@ -1,0 +1,6 @@
+-in:file:l pdb_list.txt
+-write_all_connect_info true
+-in:file:fullatom
+-parser:protocol relax_script.xml
+-load_PDB_components false
+-run:reinitialize_mover_for_each_job

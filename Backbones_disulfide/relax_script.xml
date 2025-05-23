@@ -1,0 +1,55 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="ref" weights="ref2015" />
+	</SCOREFXNS>
+
+	<PACKER_PALETTES>
+		<CustomBaseTypePackerPalette name="design_palette" additional_residue_types="DALA,DASP,DGLU,DPHE,DHIS,DILE,DLYS,DLEU,DASN,DPRO,DGLN,DARG,DSER,DTHR,DVAL,DTRP,DTYR,NLU,DNLU,NVL,DNVL,A12,DA12,B27,DB27,B30,DB30,BB8,DBB8,ORN,DORN,DPP,DDPP,DAB,DDAB,HYP,DHYP,AIB" />
+	</PACKER_PALETTES>
+	
+	<RESIDUE_SELECTORS>
+		<ResidueName name="select_CYS" residue_name3="CYS,DCS" />
+		<Index name="select_lower_cutpoint_pep" resnums="12" />
+                <Index name="select_upper_cutpoint_pep" resnums="1" />
+	</RESIDUE_SELECTORS>
+
+	<TASKOPERATIONS>
+                <ExtraRotamersGeneric name="extra_rotamer" ex1="true" ex2="true" extrachi_cutoff="0" />
+                <IncludeCurrent name="include_current_rotamer" />
+	</TASKOPERATIONS>
+
+	<MOVE_MAP_FACTORIES>
+                <MoveMapFactory name="frlx_mf" bb="false" chi="true" />
+	</MOVE_MAP_FACTORIES>
+
+	<MOVERS>
+		<DeclareBond name="peptide_bond" res1="1" atom1="N" atom2="C" res2="12" add_termini="true" />
+		<ModifyVariantType name="remove_N_terminus" residue_selector="select_upper_cutpoint_pep" remove_type="LOWER_TERMINUS_VARIANT" />
+                <ModifyVariantType name="remove_C_terminus" residue_selector="select_lower_cutpoint_pep" remove_type="UPPER_TERMINUS_VARIANT" />
+
+		<FastRelax name="frlx" movemap_factory="frlx_mf" scorefxn="ref" repeats="1"
+                task_operations="extra_rotamer,include_current_rotamer"
+                packer_palette="design_palette" ramp_down_constraints="false"
+                use_masala_cfn_optimizers="true"
+                masala_cfn_optimizer="MonteCarloCostFunctionNetworkOptimizer" >
+                        <MasalaOptimizerConfiguration>
+                                <MonteCarloCostFunctionNetworkOptimizerConfig set_cpu_threads_to_request="1" set_attempts_per_problem="16"
+                                set_annealing_schedule_by_name="LogarithmicRepeatAnnealingSchedule" set_annealing_steps_per_attempt="100000"
+                                set_do_greedy_refinement="true" set_greedy_refinement_mode="refine_top" />
+                        </MasalaOptimizerConfiguration>
+		</FastRelax>
+
+		<TryDisulfPermutations name="try_disulf" selector="select_CYS" consider_already_bonded="false" />
+	</MOVERS>
+	
+	<PROTOCOLS>
+		<Add mover="remove_N_terminus" />
+                <Add mover="remove_C_terminus" />
+		<Add mover="peptide_bond" />
+		<Add mover="try_disulf" />
+		<Add mover="frlx" />
+		<Add mover="peptide_bond" />
+	</PROTOCOLS>
+	
+	<OUTPUT scorefxn="ref"/>
+</ROSETTASCRIPTS>
